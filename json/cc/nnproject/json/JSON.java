@@ -38,6 +38,9 @@ public final class JSON {
 	public final static boolean parse_members = false;
 	
 	public final static Object null_equivalent = new NullEquivalent();
+	
+	private static final Boolean TRUE = new Boolean(true);
+	private static final Boolean FALSE = new Boolean(false);
 
 	public static JSONObject getObject(String string) throws JSONException {
 		if (string == null || string.length() <= 1)
@@ -228,9 +231,9 @@ public final class JSON {
 				if (str.equals("null"))
 					return null_equivalent;
 				if (str.equals("true"))
-					return Boolean.TRUE;
+					return TRUE;
 				if (str.equals("false"))
-					return Boolean.FALSE;
+					return FALSE;
 				if(str.charAt(0) == '0' && str.charAt(1) == 'x') {
 					try {
 						return new Integer(Integer.parseInt(str.substring(2), 16));
@@ -349,9 +352,9 @@ public final class JSON {
 			if (o instanceof Short)
 				return new Double(((Short)o).shortValue());
 			else if (o instanceof Integer)
-				return new Double(((Integer)o).doubleValue());
+				return new Double(((Integer)o).intValue());
 			else if (o instanceof Long)
-				return new Double(((Long)o).doubleValue());
+				return new Double(((Long)o).longValue());
 			else if (o instanceof Double)
 				return (Double) o;
 			//else if (o instanceof Float)

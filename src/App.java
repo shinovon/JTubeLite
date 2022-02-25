@@ -112,7 +112,6 @@ public class App implements CommandListener, Constants {
 	private void loadForm() {
 		try {
 			loadingItem = new StringItem(null, Locale.s(TITLE_Loading));
-			loadingItem.setLayout(Item.LAYOUT_CENTER);
 			mainForm.append(loadingItem);
 			if(startScreen == 0) {
 				loadTrends();

@@ -20,23 +20,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
+import java.io.InputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 
 public class Util implements Constants {
 
-	private static boolean enc;
-
 	public static byte[] get(String url) throws IOException {
 		if (url == null)
 			throw new IllegalArgumentException("URL is null");
 		ByteArrayOutputStream o = null;
 		HttpConnection hc = null;
-		DataInputStream in = null;
+		InputStream in = null;
 		try {
 			hc = (HttpConnection) Connector.open(url);
 			hc.setRequestMethod("GET");
@@ -44,7 +41,7 @@ public class Util implements Constants {
 			//hc.setRequestProperty("Accept-Encoding", "identity");
 			int r = hc.getResponseCode();
 			if(r >= 300 && r != 500) throw new IOException(r + " " + hc.getResponseMessage());
-			in = hc.openDataInputStream();
+			in = hc.openInputStream();
 			/*
 			int s = 0;
 			
@@ -87,13 +84,12 @@ public class Util implements Constants {
 	}
 	
 	public static String getUtf(String url) throws IOException {
-		if(!enc)
+		byte[] b = get(url);
 		try {
-			return new String(get(url), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			enc = true;
+			return new String(b, "UTF-8");
+		} catch (Exception e) {
+			return new String(b);
 		}
-		return new String(get(url));
 	}
 	
 	public static String url(String url) {
