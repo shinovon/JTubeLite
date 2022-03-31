@@ -24,9 +24,8 @@ import javax.microedition.lcdui.Command;
 public interface Constants extends LocaleConstants {
 	
 	// urls
-	static final String getlinksphp = "http://nnproject.cc/getlinks.php";
 	static final String iteroni = "http://iteroni.com/";
-	static final String streamphp = "http://nnproject.cc/stream.php";
+	static final String streamphp = "http://nnp.nnchan.ru/stream.php?url=";
 	
 	static final String CONFIG_RECORD_NAME = "ytconfig";
 	

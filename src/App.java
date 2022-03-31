@@ -53,6 +53,9 @@ public class App implements CommandListener, Constants {
 	public static String serverstream = streamphp;
 	public static int startScreen; // 0 - Trends 1 - Popular
 	public static String inv = iteroni;
+	public static int downloadBuffer = 1024;
+	
+	public static final String quality = "144p";
 	
 	public static App inst;
 	public static AppLite midlet;
@@ -326,7 +329,7 @@ public class App implements CommandListener, Constants {
 		for(int i = 0; i < l; i++) {
 			JSONObject o = arr.getObject(i);
 			String q = o.getString("qualityLabel");
-			if(q.startsWith("144p")) {
+			if(q.startsWith(quality)) {
 				r = o;
 				break;
 			}
@@ -335,7 +338,7 @@ public class App implements CommandListener, Constants {
 	}
 
 	public static String getVideoLink(String id) throws JSONException, IOException {
-		return serverstream + "?url=" + Util.url(getVideoInfo(id).getString("url"));
+		return serverstream + Util.url(getVideoInfo(id).getString("url"));
 	}
 
 	public static void open(AbstractModel model) {

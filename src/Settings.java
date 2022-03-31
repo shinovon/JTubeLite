@@ -49,11 +49,13 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 	private TextField downloadDirText;
 	private TextField httpProxyText;
 	private TextField invidiousText;
+	private TextField downloadBufferText;
 	private StringItem dirBtn;
 
 	private List dirList;
 
 	private String curDir;
+
 
 	private final static Command dirOpenCmd = new Command(Locale.s(CMD_Open), Command.ITEM, 1);
 	private final static Command dirSelectCmd = new Command(Locale.s(CMD_Apply), Command.OK, 2);
@@ -74,6 +76,8 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 		append(invidiousText);
 		httpProxyText = new TextField(Locale.s(SET_StreamProxy), App.serverstream, 256, TextField.URL);
 		append(httpProxyText);
+		downloadBufferText = new TextField(Locale.s(SET_DownloadBuffer), Integer.toString(App.downloadBuffer), 5, TextField.NUMERIC);
+		append(downloadBufferText);
 	}
 	
 	public void show() {
@@ -99,15 +103,15 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 		}
 		if(r == null) {
 			// Defaults
-					String downloadDir = System.getProperty("fileconn.dir.videos");
-					if(downloadDir == null)
-						downloadDir = System.getProperty("fileconn.dir.photos");
-					if(downloadDir == null)
-						downloadDir = "C:/";
-					else if(downloadDir.startsWith("file:///"))
-						downloadDir = downloadDir.substring("file:///".length());
-					App.downloadDir = downloadDir;
-			
+			// TODO: check maemo & meego somehow
+			String downloadDir = System.getProperty("fileconn.dir.videos");
+			if(downloadDir == null)
+				downloadDir = System.getProperty("fileconn.dir.photos");
+			if(downloadDir == null)
+				downloadDir = "C:/";
+			else if(downloadDir.startsWith("file:///"))
+				downloadDir = downloadDir.substring("file:///".length());
+			App.downloadDir = downloadDir;
 		} else {
 			try {
 				JSONObject j = JSON.getObject(new String(r.getRecord(1)));
@@ -122,6 +126,11 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 					App.inv = j.getString("inv");
 				if(j.has("startScreen"))
 					App.startScreen = j.getInt("startScreen");
+				if(j.has("downloadBuffer"))
+					App.downloadBuffer = j.getInt("downloadBuffer");
+				if(App.serverstream == null || App.serverstream.endsWith(".php")) {
+					App.serverstream = Constants.streamphp;
+				}
 				return;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -141,6 +150,7 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 			App.downloadDir = dir;
 			App.serverstream = httpProxyText.getString();
 			App.inv = invidiousText.getString();
+			App.downloadBuffer = Integer.parseInt(downloadBufferText.getString());
 			saveConfig();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,12 +166,14 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 		try {
 			RecordStore r = RecordStore.openRecordStore(CONFIG_RECORD_NAME, true);
 			JSONObject j = new JSONObject();
+			final String q = "\"";
 			j.put("v", "\"v1\"");
-			j.put("region", "\"" + App.region + "\"");
-			j.put("downloadDir", "\"" + App.downloadDir + "\"");
-			j.put("serverstream", "\"" + App.serverstream + "\"");
-			j.put("inv", "\"" + App.inv + "\"");
+			j.put("region", q.concat(App.region).concat(q));
+			j.put("downloadDir", q.concat(App.downloadDir).concat(q));
+			j.put("serverstream", q.concat(App.serverstream).concat(q));
+			j.put("inv", q.concat(App.inv).concat(q));
 			j.put("startScreen", new Integer(App.startScreen));
+			j.put("downloadBuffer", new Integer(App.downloadBuffer));
 			byte[] b = j.build().getBytes();
 			
 			r.addRecord(b, 0, b.length);

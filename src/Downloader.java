@@ -31,6 +31,9 @@ import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Gauge;
+
+import cc.nnproject.json.JSONObject;
 
 public class Downloader implements CommandListener, Constants, Runnable {
 	
@@ -42,6 +45,8 @@ public class Downloader implements CommandListener, Constants, Runnable {
 	private String file;
 	private Thread t;
 	private boolean cancel;
+
+	private Gauge indicator;
 	
 
 	public Downloader(String vid, Displayable d, String downloadDir) {
@@ -63,8 +68,10 @@ public class Downloader implements CommandListener, Constants, Runnable {
 			String f = id + ".3gp";
 			file = file + f;
 			info(f);
-			
-			String url = App.getVideoLink(id);
+
+			JSONObject o = App.getVideoInfo(id);
+			String url = App.serverstream + Util.url(o.getString("url"));
+			int contentLength = o.getInt("clen", 0);
 			// подождать
 			Thread.sleep(500);
 			fc = (FileConnection) Connector.open(file, Connector.READ_WRITE);
@@ -96,11 +103,15 @@ public class Downloader implements CommandListener, Constants, Runnable {
 			if(cancel) return;
 			int redirectCount = 0;
 			while (r == 301 || r == 302) {
-				info(Locale.s(TXT_Redirected) + " (" + redirectCount++ + ")");
+				info(Locale.s(TXT_Redirected).concat(" (")
+						.concat(Integer.toString(redirectCount++))
+						.concat(")"));
 				String redir = hc.getHeaderField("Location");
 				if (redir.startsWith("/")) {
 					String tmp = url.substring(url.indexOf("//") + 2);
-					String host = url.substring(0, url.indexOf("//")) + "//" + tmp.substring(0, tmp.indexOf("/"));
+					String host = url.substring(0, url.indexOf("//"))
+							.concat("//")
+							.concat(tmp.substring(0, tmp.indexOf("/")));
 					redir = host + redir;
 				}
 				hc.close();
@@ -112,23 +123,48 @@ public class Downloader implements CommandListener, Constants, Runnable {
 			out = fc.openOutputStream();
 			in = hc.openInputStream();
 			info(Locale.s(TXT_Connected));
-			int bufSize = 0;
-			/*try {
-				bufSize = in.available();
-			} catch (Exception e) {
-			}
-			if(bufSize <= 0) */bufSize = 1024;
+			int bufSize = App.downloadBuffer;
 			byte[] buf = new byte[bufSize];
 			int read = 0;
-			int downloaded = 0;
+			int d = 0;
+			int l = contentLength;
+			if(l <= 0) {
+				try {
+					l = (int) hc.getLength();
+				} catch (Exception e) {
+			
+				}
+			}
+			boolean ind = true;
+			if(l <= 0) {
+				// indicator unavailable
+				ind = false;
+			} else {
+				indicator = new Gauge(null, false, 100, 0); 
+				alert.setIndicator(indicator);
+			}
 			if(cancel) return;
+			String sizeStr = ind ? Integer.toString(l) : null;
 			int i = 0;
 			while((read = in.read(buf)) != -1) {
 				out.write(buf, 0, read);
-				downloaded += read;
+				d += read;
 				if(i++ % 100 == 0) {
 					if(cancel) return;
-					info(Locale.s(TXT_Downloaded) + " " + (downloaded / 1024) + " Kbytes");
+					if(ind) {
+						int p = (int)(((double)d / (double)l) * 100d);
+						info(Locale.s(TXT_Downloading)
+								.concat(" \n")
+								.concat(Integer.toString(d))
+								.concat(" / ")
+								.concat(sizeStr)
+								.concat(" MB\n")
+								.concat(Integer.toString(p))
+								.concat("%"),
+								p);
+					} else {
+						info(Locale.s(TXT_Downloaded).concat(" ").concat(Integer.toString(d / 1024)).concat(" Kb"));
+					}
 				}
 			}
 			done();
@@ -169,7 +205,9 @@ public class Downloader implements CommandListener, Constants, Runnable {
 
 	private void done() {
 		hideIndicator();
-		info(Locale.s(TXT_Done) + "\n" + file);
+		info(Locale.s(TXT_Done)
+				.concat("\n")
+				.concat(file));
 		alert.addCommand(dlOkCmd);
 	}
 
@@ -183,6 +221,13 @@ public class Downloader implements CommandListener, Constants, Runnable {
 		alert.setTitle(title);
 		alert.setString(s);
 		alert.addCommand(dlOkCmd);
+	}
+
+	private void info(String s, int percent) {
+		if(indicator != null && percent >= 0 && percent <= 100) {
+			indicator.setValue(percent);
+		}
+		info(s);
 	}
 
 	private void info(String s) {
