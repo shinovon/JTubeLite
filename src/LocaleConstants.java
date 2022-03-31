@@ -77,5 +77,6 @@ public interface LocaleConstants {
 	public static final int CMD_Select = 53;
 	// Lite exclusive constants
 	public static final int SET_DownloadBuffer = 54;
+	public static final int TXT_VideoDuration = 55;
 
 }

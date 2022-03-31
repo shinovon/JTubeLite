@@ -61,14 +61,11 @@ public class VideoForm extends ModelForm implements CommandListener, ItemCommand
 			}
 		} catch (Exception e) {
 		}
-		Item t = new StringItem(null, video.getTitle());
-		append(t);
-		Item author = new StringItem(null, video.getAuthor());
-		append(author);
-		Item vi = new StringItem(Locale.s(TXT_Views), Locale.views(video.getViewCount()));
-		append(vi);
-		Item date = new StringItem(Locale.s(TXT_Published), video.getPublishedText());
-		append(date);
+		append(new StringItem(null, video.getTitle()));
+		append(new StringItem(null, video.getAuthor()));
+		append(new StringItem(Locale.s(TXT_VideoDuration), Util.timeStr(video.getLengthSeconds())));
+		append(new StringItem(Locale.s(TXT_Views), Locale.views(video.getViewCount())));
+		append(new StringItem(Locale.s(TXT_Published), video.getPublishedText()));
 		append(new StringItem(Locale.s(TXT_Description), video.getDescription()));
 	}
 
