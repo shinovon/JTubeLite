@@ -41,6 +41,7 @@ import cc.nnproject.json.JSON;
 import cc.nnproject.json.JSONArray;
 import cc.nnproject.json.JSONException;
 import cc.nnproject.json.JSONObject;
+import models.VideoModel;
 import nnjtubelite.AppLite;
 
 public class App implements CommandListener, Constants {
@@ -348,7 +349,7 @@ public class App implements CommandListener, Constants {
 	public static void open(AbstractModel model, Form formContainer) {
 		App app = inst;
 		// check if already loading
-		if(formContainer == null && app.videoForm != null) {
+		if(formContainer == null && app.videoForm != null && model instanceof VideoModel) {
 			return;
 		}
 		if(model.isFromSearch()) {
@@ -359,6 +360,7 @@ public class App implements CommandListener, Constants {
 		if(form instanceof VideoForm) {
 			app.videoForm = (VideoForm) form;
 		} else if(form instanceof ChannelForm) {
+			app.videoForm = null;
 			app.channelForm = (ChannelForm) form;
 		}
 		if(formContainer != null) {
