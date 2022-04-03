@@ -41,7 +41,6 @@ import cc.nnproject.json.JSON;
 import cc.nnproject.json.JSONArray;
 import cc.nnproject.json.JSONException;
 import cc.nnproject.json.JSONObject;
-import models.VideoModel;
 import nnjtubelite.AppLite;
 
 public class App implements CommandListener, Constants {
