@@ -1,4 +1,4 @@
-MIDlet-Version: 1.0.2
+MIDlet-Version: 1.1.0
 MIDlet-Vendor: nnproject
 MIDlet-Icon: /i.png
 MicroEdition-Configuration: CLDC-1.0
@@ -7,3 +7,4 @@ MIDlet-Name: JTube Lite
 MIDlet-1: JTube,/i.png,nnjtubelite.AppLite
 MicroEdition-Profile: MIDP-1.0
 MIDlet-Jar-URL: JTubeLite.jar
+MIDlet-Permissions: javax.microedition.io.Connector.http,javax.microedition.io.Connector.file.write,javax.microedition.io.Connector.file.read

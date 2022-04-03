@@ -124,6 +124,10 @@ public class Locale implements LocaleConstants {
 				return "About";
 			case CMD_Select:
 				return "Select";
+			case SET_DownloadBuffer:
+				return "Download buffer size (bytes)";
+			case TXT_VideoDuration:
+				return "Video duration";
 			}
 		return null;
 	}
