@@ -21,6 +21,7 @@ SOFTWARE.
 */
 package cc.nnproject.json;
 
+//import java.util.Enumeration;
 import java.util.Vector;
 
 public class JSONArray extends AbstractJSON {
@@ -102,12 +103,8 @@ public class JSONArray extends AbstractJSON {
 		}
 	}
 	
-	public Double getNumber(int index) throws JSONException {
-		return JSON.getDouble(get(index));
-	}
-	
 	public int getInt(int index) throws JSONException {
-		return getNumber(index).intValue();
+		return (int) JSON.getLong(get(index)).longValue();
 	}
 	
 	public int getInt(int index, int def) {
@@ -119,7 +116,7 @@ public class JSONArray extends AbstractJSON {
 	}
 	
 	public long getLong(int index) throws JSONException {
-		return getNumber(index).longValue();
+		return JSON.getLong(get(index)).longValue();
 	}
 
 	public long getLong(int index, long def) {
@@ -131,9 +128,9 @@ public class JSONArray extends AbstractJSON {
 	}
 	
 	public double getDouble(int index) throws JSONException {
-		return getNumber(index).doubleValue();
+		return JSON.getDouble(get(index)).doubleValue();
 	}
-
+	
 	public double getDouble(int index, double def) {
 		try {
 			return getDouble(index);
@@ -144,12 +141,15 @@ public class JSONArray extends AbstractJSON {
 	
 	public boolean getBoolean(int index) throws JSONException {
 		Object o = get(index);
+		if(o == JSON.TRUE) return true;
+		if(o == JSON.FALSE) return false;
 		if(o instanceof Boolean) return ((Boolean) o).booleanValue();
 		if(o instanceof Integer) return ((Integer) o).intValue() > 0;
 		if(o instanceof String) {
 			String s = (String) o;
-			if(s.equals("1") || s.equals("true") || s.equals("TRUE")) return true;
-			else if(s.equals("0") || s.equals("false") || s.equals("FALSE") || s.equals("-1")) return false;
+			s = s.toLowerCase();
+			if(s.equals("true")) return true;
+			if(s.equals("false")) return false;
 		}
 		throw new JSONException("Not boolean: " + o + " (" + index + ")");
 	}
@@ -160,6 +160,14 @@ public class JSONArray extends AbstractJSON {
 		} catch (Exception e) {
 			return def;
 		}
+	}
+	
+	public void put(String s) {
+		vector.addElement("\"".concat(s).concat("\""));
+	}
+	
+	public void put(Object obj) {
+		vector.addElement(JSON.getJSON(obj));
 	}
 	
 	public void clear() {
@@ -173,4 +181,79 @@ public class JSONArray extends AbstractJSON {
 	public String toString() {
 		return vector.toString();
 	}
+/*
+	public String build() {
+		if (size() == 0)
+			return "[]";
+		String s = "[";
+		int i = 0;
+		while(i < size()) {
+			Object v = null;
+			try {
+				v = get(i);
+			} catch (JSONException e) {
+			}
+			if (v instanceof JSONObject) {
+				s += ((JSONObject) v).build();
+			} else if (v instanceof JSONArray) {
+				s += ((JSONArray) v).build();
+			} else if (v instanceof String) {
+				s += "\"" + JSON.escape_utf8(v.toString()) + "\"";
+			} else s += v;
+			i++;
+			if (i < size()) s += ",";
+		}
+		s += "]";
+		return s;
+	}
+
+	protected String format(int l) {
+		if (size() == 0)
+			return "[]";
+		String t = "";
+		String s = "";
+		for (int i = 0; i < l; i++) {
+			t += JSON.FORMAT_TAB;
+		}
+		String t2 = t + JSON.FORMAT_TAB;
+		s += "[\n";
+		s += t2;
+		for (int i = 0; i < size(); ) {
+			Object v = null;
+			try {
+				v = get(i);
+			} catch (JSONException e) {
+			}
+			if (v instanceof JSONObject) {
+				s += ((JSONObject) v).format(l + 1);
+			} else if (v instanceof String) {
+				s += "\"" + JSON.escape_utf8(v.toString()) + "\"";
+			} else s += v;
+			i++;
+			if(i < size()) s += ",\n" + t2;
+		}
+		if (l > 0) {
+			s += "\n" + t + "]";
+		} else {
+			s += "\n]";
+		}
+		return s;
+	}
+
+	public Enumeration elements() {
+		return new Enumeration() {
+			int i = 0;
+			public boolean hasMoreElements() {
+				return i < vector.size();
+			}
+			public Object nextElement() {
+				try {
+					return get(i++);
+				} catch (Exception e) {
+					return null;
+				}
+			}
+		};
+	}
+*/
 }

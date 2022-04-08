@@ -166,12 +166,11 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 		try {
 			RecordStore r = RecordStore.openRecordStore(CONFIG_RECORD_NAME, true);
 			JSONObject j = new JSONObject();
-			final String q = "\"";
-			j.put("v", "\"v1\"");
-			j.put("region", q.concat(App.region).concat(q));
-			j.put("downloadDir", q.concat(App.downloadDir).concat(q));
-			j.put("serverstream", q.concat(App.serverstream).concat(q));
-			j.put("inv", q.concat(App.inv).concat(q));
+			j.put("v", "v1");
+			j.put("region", App.region);
+			j.put("downloadDir", App.downloadDir);
+			j.put("serverstream", App.serverstream);
+			j.put("inv", App.inv);
 			j.put("startScreen", new Integer(App.startScreen));
 			j.put("downloadBuffer", new Integer(App.downloadBuffer));
 			byte[] b = j.build().getBytes();

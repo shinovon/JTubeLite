@@ -382,8 +382,9 @@ public class App implements CommandListener, Constants {
 		String url;
 		try {
 			url = getVideoLink(id);
+			App.gc();
 			platReq(url);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 			error(null, Errors.App_watch, e);
 		}

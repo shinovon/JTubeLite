@@ -26,9 +26,9 @@ import java.util.Vector;
 
 /**
  * JSON Library by nnproject.cc<br>
- * Usage:<p><code>JSONObject obj = NNJSON.getObject(str);</code>
+ * Usage:<p><code>JSONObject obj = JSON.getObject(str);</code>
  * @author Shinovon
- * @version 1.0
+ * @version 1.1
  */
 public final class JSON {
 
@@ -38,9 +38,11 @@ public final class JSON {
 	public final static boolean parse_members = false;
 	
 	public final static Object null_equivalent = new NullEquivalent();
+
+	//public static final String FORMAT_TAB = "  ";
 	
-	private static final Boolean TRUE = new Boolean(true);
-	private static final Boolean FALSE = new Boolean(false);
+	public static final Boolean TRUE = new Boolean(true);
+	public static final Boolean FALSE = new Boolean(false);
 
 	public static JSONObject getObject(String string) throws JSONException {
 		if (string == null || string.length() <= 1)
@@ -83,101 +85,26 @@ public final class JSON {
 			} else if (first == '"') {
 				// String
 				str = str.substring(1, str.length() - 1);
-				/*
+				char[] chars = str.toCharArray();
+				str = null;
 				try {
-					int l = str.length();
+					int l = chars.length;
 					StringBuffer sb = new StringBuffer();
 					int i = 0;
 					// Parse string escape chars
 					loop: {
 						while (i < l) {
-							char c = str.charAt(i);
+							char c = chars[i];
 							switch (c) {
-							case '&': {
-								next: {
-									replaced: {
-										if(str.length() < i + 1) {
-											sb.append(c);
-											break loop;
-										}
-										try {
-											switch (str.charAt(i + 1)) {
-											case 'a':
-												if(str.charAt(i + 2) == 'm' && str.charAt(i + 3) == 'p' && str.charAt(i + 4) == ';') {
-													i += 5;
-													sb.append('&');
-													break replaced;
-												}
-												break next;
-											case 'l':
-												if(str.charAt(i + 2) == 't' && str.charAt(i + 3) == ';') {
-													i += 4;
-													sb.append('<');
-													break replaced;
-												}
-												break next;
-											case 'g':
-												if(str.charAt(i + 2) == 't' && str.charAt(i + 3) == ';') {
-													i += 4;
-													sb.append('>');
-													break replaced;
-												}
-												break next;
-											case 'q':
-												if(str.charAt(i + 2) == 'u' && str.charAt(i + 3) == 'o' && str.charAt(i + 4) == 't' && str.charAt(i + 5) == ';') {
-													i += 6;
-													sb.append('\"');
-													break replaced;
-												}
-												break next;
-											default:
-												break next;
-											}
-										} catch (Exception e) {
-											break next;
-										}
-									}
-									break;
-								}
-								sb.append(c);
-								i++;
-								break;
-							}
-							case '<' : {
-								if(str.length() < i + 1) {
-									sb.append(c);
-									break loop;
-								}
-								try {
-									if(str.charAt(i + 1) == 'b' && str.charAt(i + 2) == 'r' && str.charAt(i + 3) == '>') {
-										i++;
-										break;
-									}
-								} catch (Exception e) {
-								}
-								sb.append(c);
-								i++;
-								break;
-							}
 							case '\\': {
 								next: {
 									replaced: {
-										if(str.length() < i + 1) {
+										if(l < i + 1) {
 											sb.append(c);
 											break loop;
 										}
-										char c1 = str.charAt(i + 1);
+										char c1 = chars[i + 1];
 										switch (c1) {
-										case 'u':
-											i++;
-											String u = "" + str.charAt(i++) + str.charAt(i++) + str.charAt(i++) + str.charAt(i++);
-											sb.append((char) Integer.parseInt(u, 16));
-											break replaced;
-										case 'x':
-											i++;
-											String x = "" + str.charAt(i++) + str.charAt(i++);
-											sb.append((char) Integer.parseInt(x, 16));
-											break replaced;
 										case 'n':
 											sb.append('\n');
 											i+=2;
@@ -225,7 +152,6 @@ public final class JSON {
 					str = sb.toString();
 				} catch (Exception e) {
 				}
-				*/
 				return str;
 			} else if (first != '{' && first != '[') {
 				if (str.equals("null"))
@@ -245,23 +171,6 @@ public final class JSON {
 						}
 					}
 				}
-				try {
-					return Integer.valueOf(str);
-				} catch (Exception e) {
-					try {
-						return new Long(Long.parseLong(str));
-					} catch (Exception e2) {
-						try {
-							return Double.valueOf(str);
-						} catch (Exception e3) {
-						}
-					}
-				}
-				/*
-				if(str.length() == 0 || str.equals("") || str.equals(" "))
-					throw new JSONException("Empty value");
-				throw new JSONException("Unknown value: " + str);
-				*/
 				return str;
 			} else {
 				// Parse json object or array
@@ -306,12 +215,6 @@ public final class JSON {
 
 					if (object && key == null) {
 						key = str.substring(i, splIndex);
-						//while(n.startsWith("\r") || n.startsWith("\n")) {
-						//	n = n.substring(1);
-						//}
-						//while(n.endsWith("\r") || n.endsWith("\n") || n.endsWith(" ")) {
-						//	n = n.substring(0, n.length() - 1);
-						//}
 						key = key.substring(1, key.length() - 1);
 						nextDelimiter = ',';
 					} else {
@@ -352,17 +255,33 @@ public final class JSON {
 			if (o instanceof Short)
 				return new Double(((Short)o).shortValue());
 			else if (o instanceof Integer)
-				return new Double(((Integer)o).intValue());
+				return new Double(((Integer)o).doubleValue());
 			else if (o instanceof Long)
-				return new Double(((Long)o).longValue());
+				return new Double(((Long)o).doubleValue());
 			else if (o instanceof Double)
 				return (Double) o;
-			//else if (o instanceof Float)
-			//	return new Double(((Float)o).doubleValue());
 			else if (o instanceof String)
 				return Double.valueOf((String) o);
 		} catch (Throwable e) {
 		}
 		throw new JSONException("Value cast failed: " + o);
 	}
+
+	public static Long getLong(Object o) throws JSONException {
+		try {
+			if (o instanceof Short)
+				return new Long(((Short)o).shortValue());
+			else if (o instanceof Integer)
+				return new Long(((Integer)o).longValue());
+			else if (o instanceof Long)
+				return (Long) o;
+			else if (o instanceof Double)
+				return new Long(((Double)o).longValue());
+			else if (o instanceof String)
+				return new Long(Long.parseLong((String) o));
+		} catch (Throwable e) {
+		}
+		throw new JSONException("Value cast failed: " + o);
+	}
+
 }
