@@ -45,7 +45,7 @@ import nnjtubelite.AppLite;
 
 public class App implements CommandListener, Constants {
 	
-	public static final String ver = "r1.1";
+	public static final String ver = "1.1.1";
 	
 	// Settings
 	public static String region;
