@@ -32,8 +32,8 @@ public interface Constants extends LocaleConstants {
 	// Main form commands
 	static final Command settingsCmd = new Command(Locale.s(CMD_Settings), Command.SCREEN, 4);
 	static final Command idCmd = new Command(Locale.s(CMD_OpenByID), Command.SCREEN, 8);
-	static final Command searchCmd = new Command(Locale.s(CMD_Search), Command.SCREEN, 7);
-	static final Command aboutCmd = new Command(Locale.s(CMD_About), Command.SCREEN, 3);
+	static final Command searchCmd = new Command(Locale.s(CMD_Search), Command.SCREEN, 2);
+	static final Command aboutCmd = new Command(Locale.s(CMD_About), Command.SCREEN, 10);
 	static final Command switchToPopularCmd = new Command(Locale.s(CMD_SwitchToPopular), Command.SCREEN, 3);
 	static final Command switchToTrendsCmd = new Command(Locale.s(CMD_SwitchToTrends), Command.SCREEN, 3);
 	

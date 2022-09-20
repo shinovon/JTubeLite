@@ -80,7 +80,6 @@ public class App implements CommandListener, Constants {
 						try {
 							((Runnable)queuedTasks.elementAt(0)).run();
 						} catch (Exception e) {
-							e.printStackTrace();
 						}
 						queuedTasks.removeElementAt(0);
 						Thread.yield();
@@ -126,7 +125,6 @@ public class App implements CommandListener, Constants {
 			gc();
 			error(this, Errors.App_loadForm, "Out of memory!");
 		} catch (Throwable e) {
-			e.printStackTrace();
 			error(this, Errors.App_loadForm, e);
 		}
 	}
@@ -213,7 +211,6 @@ public class App implements CommandListener, Constants {
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
-			e.printStackTrace();
 			error(this, Errors.App_loadTrends, e);
 		}
 		gc();
@@ -242,7 +239,6 @@ public class App implements CommandListener, Constants {
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
-			e.printStackTrace();
 			error(this, Errors.App_loadPopular, e);
 		}
 		gc();
@@ -274,7 +270,6 @@ public class App implements CommandListener, Constants {
 			}
 			j = null;
 		} catch (Exception e) {
-			e.printStackTrace();
 			error(this, Errors.App_search, e);
 		}
 		gc();
@@ -385,7 +380,6 @@ public class App implements CommandListener, Constants {
 			App.gc();
 			platReq(url);
 		} catch (Throwable e) {
-			e.printStackTrace();
 			error(null, Errors.App_watch, e);
 		}
 	}

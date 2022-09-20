@@ -25,7 +25,7 @@ import java.io.OutputStream;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
-import javax.microedition.io.file.FileConnection;
+import javax.microedition.io.StreamConnection;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
@@ -60,11 +60,12 @@ public class Downloader implements CommandListener, Constants, Runnable {
 	
 	public void run() {
 		if(cancel) return;
-		FileConnection fc = null;
+		StreamConnection fc = null;
 		OutputStream out = null;
 		HttpConnection hc = null;
 		InputStream in = null;
 		try {
+			Class.forName("javax.microedition.io.file.FileConnection");
 			String f = id + ".3gp";
 			file = file + f;
 			info(f);
@@ -74,15 +75,7 @@ public class Downloader implements CommandListener, Constants, Runnable {
 			int contentLength = o.getInt("clen", 0);
 			// подождать
 			Thread.sleep(500);
-			fc = (FileConnection) Connector.open(file, Connector.READ_WRITE);
-			
-			if (fc.exists()) {
-				try {
-					fc.delete();
-				} catch (IOException e) {
-				}
-			}
-			fc.create();
+			fc = FileOperations.createFile(f);
 			info(Locale.s(TXT_Connecting));
 			hc = (HttpConnection) Connector.open(url);
 			int r;
@@ -171,7 +164,8 @@ public class Downloader implements CommandListener, Constants, Runnable {
 		} catch (InterruptedException e) {
 			fail(Locale.s(TXT_Canceled), "");
 		} catch (Exception e) {
-			e.printStackTrace();
+			fail(e.toString(), Locale.s(TXT_DownloadFailed));
+		} catch (Throwable e) {
 			fail(e.toString(), Locale.s(TXT_DownloadFailed));
 		} finally {
 			try {

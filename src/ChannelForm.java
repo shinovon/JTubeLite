@@ -110,7 +110,6 @@ public class ChannelForm extends ModelForm implements CommandListener, Constants
 				if(i >= LATESTVIDEOS_LIMIT) break;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			App.error(this, Errors.ChannelForm_latestVideos, e);
 		}
 	}
@@ -132,7 +131,6 @@ public class ChannelForm extends ModelForm implements CommandListener, Constants
 				if(i >= SEARCH_LIMIT) break;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			App.error(this, Errors.ChannelForm_search, e);
 		}
 	}

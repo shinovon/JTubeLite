@@ -19,12 +19,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.microedition.io.Connector;
-import javax.microedition.io.file.FileConnection;
-import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -85,12 +81,9 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 	
 	private static void getRoots() {
 		if(rootsVector != null) return;
-		rootsVector = new Vector();
-		Enumeration roots = FileSystemRegistry.listRoots();
-		while(roots.hasMoreElements()) {
-			String s = (String) roots.nextElement();
-			if(s.startsWith("file:///")) s = s.substring("file:///".length());
-			rootsVector.addElement(s);
+		try {
+			rootsVector = FileOperations.getRoots();
+		} catch (Throwable e) {
 		}
 	}
 	
@@ -133,7 +126,6 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 				}
 				return;
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -153,7 +145,6 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 			App.downloadBuffer = Integer.parseInt(downloadBufferText.getString());
 			saveConfig();
 		} catch (Exception e) {
-			e.printStackTrace();
 			App.error(this, Errors.Settings_apply, e.toString());
 		}
 	}
@@ -178,7 +169,6 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 			r.addRecord(b, 0, b.length);
 			r.closeRecordStore();
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -189,17 +179,8 @@ public class Settings extends Form implements Constants, CommandListener, ItemCo
 		dirList.addCommand(dirSelectCmd);
 		dirList.append("- " + Locale.s(CMD_Select), null);
 		try {
-			FileConnection fc = (FileConnection) Connector.open("file:///" + f);
-			Enumeration list = fc.list();
-			while(list.hasMoreElements()) {
-				String s = (String) list.nextElement();
-				if(s.endsWith("/")) {
-					dirList.append(s.substring(0, s.length() - 1), null);
-				}
-			}
-			fc.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+			FileOperations.fillDirList(f, dirList);
+		} catch (Throwable e) {
 		}
 		App.display(dirList);
 	}
