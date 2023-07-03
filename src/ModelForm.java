@@ -20,15 +20,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.List;
 
-public abstract class ModelForm extends Form implements Runnable {
+public class ModelForm extends Form {
 
-	public ModelForm(String title) {
+	private Model model;
+
+	ModelForm(String title, Model model) {
 		super(title);
+		this.model = model;
 	}
 
-	public abstract AbstractModel getModel();
+	Model getModel() {
+		return model;
+	}
 
-	public abstract void setFormContainer(Form form);
+	void setContainer(List form) {
+		model.setContainer(form);
+	}
 	
 }

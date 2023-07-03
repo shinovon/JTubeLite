@@ -19,25 +19,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import java.io.IOException;
+import javax.microedition.lcdui.List;
 
-public class NetRequestException extends IOException {
+abstract class Model implements Constants, Runnable {
+	boolean fromSearch;
 	
-	private String url;
-	private IOException cause;
+	abstract String makeItemForList();
+	
+	abstract void dispose();
+	
+	abstract ModelForm makeForm();
 
-	public NetRequestException(IOException e, String url) {
-		super(url);
-		cause = e;
-		this.url = url;
-	}
+	abstract void setContainer(List form);
 	
-	public String getUrl() {
-		return url;
-	}
-	
-	public IOException getTheCause() {
-		return cause;
-	}
-
 }

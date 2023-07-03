@@ -19,17 +19,27 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-package cc.nnproject.json;
 
-public abstract class AbstractJSON {
-/*
-	public abstract void clear();
-	public abstract int size();
-	public abstract String toString();
-	public abstract String build();
-	public final String format() {
-		return format(0);
+import javax.microedition.midlet.MIDlet;
+
+public class AppLite extends MIDlet {
+
+	private static boolean started;
+	boolean running;
+
+	protected void destroyApp(boolean b) {
+		running = false;
 	}
-	protected abstract String format(int l);
-*/
+
+	protected void pauseApp() {}
+
+	protected void startApp() {
+		if(started) return;
+		App.midlet = this;
+		started = true;
+		running = true;
+		App.inst = new App();
+		App.inst.startApp();
+	}
+
 }

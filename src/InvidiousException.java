@@ -19,25 +19,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import cc.nnproject.json.JSONObject;
 
 public class InvidiousException extends RuntimeException {
 
 	private JSONObject json;
 	private String url;
 
-	public InvidiousException(JSONObject j) {
+	InvidiousException(JSONObject j) {
 		super(j.getNullableString("error"));
 		json = j;
 	}
 
-	public InvidiousException(JSONObject j, String msg, String url) {
+	InvidiousException(JSONObject j, String msg, String url) {
 		super(msg);
 		json = j;
 		this.url = url;
 	}
 	
-	public JSONObject getJSON() {
+	JSONObject getJSON() {
 		return json;
 	}
 	
@@ -45,14 +44,14 @@ public class InvidiousException extends RuntimeException {
 		return "API error: " + getMessage();
 	}
 	
-	public String toErrMsg() {
+	String toErrMsg() {
 		boolean j = json != null;
 		boolean bt = j && json.has("backtrace");
 		boolean u = url != null;
 		return  (!bt && j ? "Raw json: " + json.build() : "") + (u ? " \nURL: " + url : "") + (bt ? " \nBacktrace: " + json.getString("backtrace") : "");
 	}
 	
-	public String getUrl() {
+	String getUrl() {
 		return url;
 	}
 

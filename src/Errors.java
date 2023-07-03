@@ -19,22 +19,22 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-public class Errors {
+class Errors {
 	
-	public static final int ChannelForm_load = 1;
-	public static final int VideoForm_load = 2;
-	public static final int Settings_apply = 3;
-	public static final int LoaderThread_run = 4;
-	public static final int App_watch = 5;
-	public static final int App_openVideo = 6;
-	public static final int App_loadForm = 7;
-	public static final int App_loadTrends = 8;
-	public static final int App_loadPopular = 9;
-	public static final int App_search = 10;
-	public static final int ChannelForm_search = 11;
-	public static final int ChannelForm_latestVideos = 12;
-	public static final int PlaylistForm_load = 13;
-	public static final int PlaylistForm_init = 14;
-	public static final int PlaylistForm_init_previews = 15;
+	static final int ChannelForm_load = 1;
+	static final int VideoForm_load = 2;
+	static final int Settings_apply = 3;
+	static final int LoaderThread_run = 4;
+	static final int App_watch = 5;
+	static final int App_openVideo = 6;
+	static final int App_loadForm = 7;
+	static final int App_loadTrends = 8;
+	static final int App_loadPopular = 9;
+	static final int App_search = 10;
+	static final int ChannelForm_search = 11;
+	static final int ChannelForm_latestVideos = 12;
+	static final int PlaylistForm_load = 13;
+	static final int PlaylistForm_init = 14;
+	static final int PlaylistForm_init_previews = 15;
 
 }
