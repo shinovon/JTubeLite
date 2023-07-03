@@ -53,6 +53,7 @@ public class App implements CommandListener, Constants, Runnable {
 	static String downloadDir;
 	static int startScreen; // 0 - Trends 1 - Popular
 	static String inv = iteroni;
+	static String invProxy = invproxy;
 	static int downloadBuffer = 1024;
 	
 	static final String quality = "144p";
@@ -1082,8 +1083,6 @@ public class App implements CommandListener, Constants, Runnable {
 	private static final Command dirCmd = new Command("Select download dir", Command.ITEM, 1);
 
 	private static Vector rootsVector;
-
-	private static String invProxy;
 	
 	private TextField regionText;
 	private TextField downloadDirText;

@@ -26,6 +26,8 @@ interface Constants {
 	
 	static final String CONFIG_RECORD_NAME = "ytconfig";
 	
+	static final String invproxy = "http://nnp.nnchan.ru/invproxy.php";
+	
 	// Limits
 	static final int TRENDS_LIMIT = 20;
 	static final int SEARCH_LIMIT = 30;
