@@ -6,7 +6,7 @@ Light version of JTube
 ```
 You will need:
 S40 5th Edition SDK
-JDK 1.5.0 (to run S40 emulator)
+JDK 1.5.0 (to install S40 SDK)
 Last version of Eclipse SDK
 MTJ plugin 2.0.1
 ```
@@ -33,76 +33,61 @@ Builded JAR & JAD files will appear at \<project path\>/deployed/S40_5th_Edition
 
 # Setting up your own server
 
-stream.php:
-https://github.com/Athlon1600/youtube-downloader
-
-hproxy.php (Image proxy):
+invproxy.php:
 ```
 <?php
-
-function reqHeaders($arr, $url = null) {
-	$res = array();
-	foreach($arr as $k=>$v) {
-		$lk = strtolower($k);
-		if($lk == 'host' && isset($url)) {
-			$dom = '';
-			if(strpos($url, 'http://') == 0) {
-				$dom = substr($url, 7);
-			} else if(strpos($url, 'https://') == 0) {
-				$dom = substr($url, 8);
-			} else {
-				$dom = $url;
-			}
-			$pos = strpos($dom, '/');
-			if($pos) {
-				$dom = substr($dom, 0, $pos);
-			}
-			array_push($res, 'Host: '. $dom);
-		} else if($lk != 'connection' && $lk != 'accept-encoding' && $lk != 'user-agent') {
-			array_push($res, $k . ': ' . $v);
-		}
-	}
-	return $res;
+<?php
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+$url = $_GET['u'];
+if(strpos($url, 'file:') === 0) die();
+$in = null;
+$post = false;
+$arr = getallheaders();
+if(isset($_GET['post'])) {
+	$post = true;
+	$in = file_get_contents('php://input');
 }
-
-function handleHeaders($str) {
-	$headersTmpArray = explode("\r\n", $str);
-	for ($i = 0; $i < count($headersTmpArray); ++$i) {
-		$s = $headersTmpArray[$i];
-		if(strlen($s) > 0) {
-			if(strpos($s, ":")) {
-				$k = substr($s, 0 , strpos($s, ":"));
-				$v = substr($s, strpos($s, ":" )+1);
-				$lk = strtolower($k);
-				if(/*$lk != 'server' && */$lk != 'connection' && $lk != 'transfer-encoding' && $lk != 'location') {
-					header($s, true);
-				}
-			}
-		}
-	}
+$h = array();
+array_push($h, 'X-Forwarded-For: ' . $_SERVER['REMOTE_ADDR']);
+foreach($arr as $k=>$v) {
+	$lk = strtolower($k);
+	if($lk == 'host' || $lk == 'connection' || $lk == 'accept-encoding' || $lk == 'accept-encoding')
+		continue;
+	array_push($h, $k . ': ' . $v);
 }
-$url = urldecode($_SERVER['QUERY_STRING']);
-$lu = strtolower($url);
-
-if(substr($lu, 0, 5) == 'file:' || substr($lu, 0, 4) == "ftp:") {
-	return;
-}
-unset($lu);
-$reqheaders = reqHeaders(getallheaders(), $url);
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
-if(isset($_SERVER['HTTP_USER_AGENT']))
-	curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
-curl_setopt($ch, CURLOPT_HTTPHEADER, $reqheaders);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $h);
 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_HEADER, true);
+if($post) {
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $in);
+}
 $res = curl_exec($ch);
 $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-$header = substr($res, 0, $headerSize);
+$h2 = substr($res, 0, $headerSize);
 $body = substr($res, $headerSize);
-handleHeaders($header);
+$headersTmpArray = explode("\r\n", $h2);
+for ($i = 0; $i < count($headersTmpArray); ++$i) {
+	$s = $headersTmpArray[$i];
+	if(strlen($s) > 0) {
+		if(strpos($s, ':')) {
+			$k = substr($s, 0, strpos($s, ':'));
+			$v = substr($s, strpos($s, ':') + 1);
+			$lk = strtolower($k);
+			if($lk == 'server' || $lk == 'connection' || $lk == 'transfer-encoding')
+				continue;
+			header($s);
+		}
+	}
+}
 curl_close($ch);
 echo $body;
+?>
+
 ?>
 ```
