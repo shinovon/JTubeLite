@@ -382,7 +382,7 @@ public class App implements CommandListener, Constants, Runnable {
 		searchList.addCommand(backCmd);
 		searchList.append("Loading", null);
 		display(searchList);
-		disposeMainForm();
+		//disposeMainForm();
 		try {
 			JSONArray j = (JSONArray) invApi("search?q=" + url(q), SEARCH_FIELDS + ",type,videoCount&type=all");
 			int l = j.size();
@@ -432,7 +432,7 @@ public class App implements CommandListener, Constants, Runnable {
 		if(id.startsWith(watch)) id = id.substring(watch.length());
 		try {
 			open(new Video(id).extend());
-			disposeMainForm();
+			//disposeMainForm();
 		} catch (Exception e) {
 			error(this, Errors.App_openVideo, e);
 		}
@@ -710,11 +710,13 @@ public class App implements CommandListener, Constants, Runnable {
 			display(mainList);
 		}
 		if(c == backCmd && d == searchList) {
-			if(mainList == null) {
-				initForm();
-			}
-			display(mainList);
 			disposeSearchForm();
+			if(mainList == null) {
+				display(mainList);
+			} else {
+				initForm();
+				loadForm();
+			}
 		}
 		if(c == switchToPopularCmd) {
 			startScreen = 1;
