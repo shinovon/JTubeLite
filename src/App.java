@@ -20,7 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,7 +45,7 @@ import javax.microedition.rms.RecordStore;
 
 public class App implements CommandListener, Constants, Runnable {
 	
-	static final String ver = "1.2.1";
+	static final String ver = "1.2.2";
 	
 	// Settings
 	static String region;
@@ -300,24 +299,22 @@ public class App implements CommandListener, Constants, Runnable {
 		if(fields != null) {
 			s = s.concat("&fields=" + fields + ",error,errorBacktrace,code");
 		}
-		String url = inv + "api/v1/" + s;
+		String url = s = inv + "api/v1/" + s;
 		if(invProxy != null && invProxy.length() > 0) {
 			s = invProxy.concat("?u=").concat(url(s));
 		}
 		try {
 			s = getUtf(s);
 		} catch (IOException e) {
-			throw new IOException(e.toString() + ";\nURL: " + s);
+			throw new IOException(e.toString() + ";\nURL: " + url);
 		}
 		Object res;
 		if(s.charAt(0) == '{') {
 			res = getObject(s);
 			if(((JSONObject) res).has("code")) {
-				System.out.println(s);
 				throw new InvidiousException((JSONObject) res, ((JSONObject) res).getString("code") + ": " + ((JSONObject) res).getNullableString("message"), url);
 			}
 			if(((JSONObject) res).has("error")) {
-				System.out.println(s);
 				throw new InvidiousException((JSONObject) res, ((JSONObject) res).getString("error"), url);
 			}
 		} else {
@@ -421,7 +418,7 @@ public class App implements CommandListener, Constants, Runnable {
 			if(search) c.fromSearch = true;
 			return c.makeItemForList();
 		}
-		return null;
+		return "Unknown object";
 	}
 
 	private void openVideo(String id) {
@@ -1301,7 +1298,7 @@ public class App implements CommandListener, Constants, Runnable {
 	static byte[] get(String url) throws IOException {
 		ByteArrayOutputStream o = null;
 		HttpConnection hc = null;
-		DataInputStream in = null;
+		InputStream in = null;
 		try {
 			hc = (HttpConnection) Connector.open(url);
 			hc.setRequestMethod("GET");
